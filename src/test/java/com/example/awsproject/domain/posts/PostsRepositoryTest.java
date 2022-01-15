@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -46,5 +48,30 @@ class PostsRepositoryTest {
         assertEquals(posts.getTitle(),title);
         assertEquals(posts.getContent(),content);
     }
+
+    @DisplayName("날짜 테스트")
+    @Test
+    public void DateTimeTest(){
+        //given
+        LocalDateTime now = LocalDateTime.of(2019,6,4,0,0,0);
+
+        postsRepository.save(Posts.builder()
+                .title("title")
+                .content("content")
+                .author("song@naver.com")
+                .build()
+        );
+        //when
+        List<Posts> postsList = postsRepository.findAll();
+
+        //then
+        Posts posts = postsList.get(0);
+
+        System.out.println("createdAt : " + posts.getCreatedAt());
+        System.out.println("modifiedAt : " + posts.getModifiedAt());
+        assertThat(posts.getCreatedAt()).isAfter(now);
+        assertThat(posts.getModifiedAt()).isAfter(now);
+    }
+
 
 }
